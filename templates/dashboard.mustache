@@ -1,0 +1,177 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template logstore_moodefense/dashboard
+
+    Context variables required for this template:
+    * roles           - array of {name, color, isother?} - top roles for the legend/chart,
+                         with any overflow/empty roles collapsed into one "Others" entry.
+    * hasothers       - bool - whether an "Others" entry is present in `roles`.
+    * othersheader    - string - heading for the "Others" breakdown.
+    * othersbreakdown - array of {name, count} - roles collapsed into "Others".
+    * chartdata       - JSON string consumed by amd/src/dashboard.js for the roles pie chart.
+    * severitydata    - JSON string consumed by amd/src/dashboard.js for the severity bar chart.
+    * issues          - array of issue rows (see dashboard.php for the field list); an
+                         empty array renders a "no incidents" placeholder row.
+    * issuesurl       - moodle_url to the full issues list.
+    * premiumcount    - int - number of incident types MooDefense Premium adds.
+    * premiumcontact  - string - mailto: link to ask about MooDefense Premium.
+
+    Example context (json):
+    {
+        "roles": [{"name": "admins (1)", "color": "hsl(10, 65%, 55%)"}],
+        "hasothers": false,
+        "chartdata": "{}",
+        "severitydata": "{}",
+        "issues": [],
+        "issuesurl": "https://example.com/admin/tool/log/store/moodefense/issues.php",
+        "premiumcount": 5,
+        "premiumcontact": "mailto:info@example.com"
+    }
+}}
+<div class="logstore-moodefense-dashboard">
+    <div class="container-fluid px-4 py-4 pb-0">
+        {{> logstore_moodefense/banner }}
+        <div class="row g-4 mb-4">
+            <div class="col-lg-7 col-md-12 d-flex">
+                <div class="card border-warning border-2 dashboard-card-equal w-100">
+                    <div class="card-body">
+                        <h6 class="mb-3 text-dark fw-bold">
+                            {{#str}}roles, logstore_moodefense{{/str}}
+                        </h6>
+                        <div class="roles-chart-wrapper">
+                            <div class="roles-list-sidebar">
+                                {{#roles}}
+                                    {{^isother}}
+                                        <div class="d-flex align-items-center py-2">
+                                            <span class="role-bullet me-2" style="background-color: {{color}};"></span>
+                                            <span class="role-name text-dark">{{name}}</span>
+                                        </div>
+                                    {{/isother}}
+                                    {{#isother}}
+                                        <button type="button" class="d-flex align-items-center py-2 roles-other"
+                                                data-toggle="tooltip" data-placement="top"
+                                                data-tooltip-target="#roles-others-tooltip">
+                                            <span class="role-bullet me-2" style="background-color: {{color}};"></span>
+                                            <span class="role-name text-dark">{{name}}</span>
+                                        </button>
+                                    {{/isother}}
+                                {{/roles}}
+                            </div>
+                            <div class="roles-chart-main">
+                                <div id="rolesChart"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 col-md-12 d-flex">
+                <div class="card border-primary border-2 dashboard-card-equal w-100">
+                    <div class="card-body">
+                        <h6 class="mb-3 text-dark fw-bold">
+                            <i class="icon fa fa-bar-chart me-2" aria-hidden="true"></i>
+                            {{#str}}issuesbyseverity, logstore_moodefense{{/str}}
+                        </h6>
+                        <div class="severity-chart-container">
+                            <div id="severityChart"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="bg-primary text-white rounded-top px-4 py-3 d-flex align-items-center">
+                    <h6 class="mb-0">
+                        <i class="icon fa fa-list me-2" aria-hidden="true"></i>
+                        {{#str}}lastissues, logstore_moodefense{{/str}}
+                    </h6>
+                </div>
+
+                <div class="table-container-full mb-0">
+                    <table class="table table-sm table-hover mb-0 compact-table md-stack-table" id="issues-table">
+                        <thead class="table-light">
+                            <tr>
+                                <th>{{#str}}column_incidentid, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_incidenttype, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_status, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_comment, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_message, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_severity, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_username, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_roles, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_userid, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_ip, logstore_moodefense{{/str}}</th>
+                                <th>{{#str}}column_time, logstore_moodefense{{/str}}</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{#issues}}
+                                <tr>
+                                    <td class="md-center fw-bold"
+                                        data-label="{{#str}}column_incidentid, logstore_moodefense{{/str}}">{{algorithm}}</td>
+                                    <td data-label="{{#str}}column_incidenttype, logstore_moodefense{{/str}}">{{incidenttype}}</td>
+                                    <td data-label="{{#str}}column_status, logstore_moodefense{{/str}}">{{status}}</td>
+                                    <td data-label="{{#str}}column_comment, logstore_moodefense{{/str}}">{{comment}}</td>
+                                    <td data-label="{{#str}}column_message, logstore_moodefense{{/str}}">{{message}}</td>
+                                    <td data-label="{{#str}}column_severity, logstore_moodefense{{/str}}">
+                                        <span class="badge bg-{{severityclass}} px-2 py-1">{{severity}}</span>
+                                    </td>
+                                    <td data-label="{{#str}}column_username, logstore_moodefense{{/str}}">{{username}}</td>
+                                    <td data-label="{{#str}}column_roles, logstore_moodefense{{/str}}">{{roles}}</td>
+                                    <td data-label="{{#str}}column_userid, logstore_moodefense{{/str}}">{{userid}}</td>
+                                    <td data-label="{{#str}}column_ip, logstore_moodefense{{/str}}">{{ip}}</td>
+                                    <td data-label="{{#str}}column_time, logstore_moodefense{{/str}}">{{time}}</td>
+                                </tr>
+                            {{/issues}}
+                            {{^issues}}
+                                <tr>
+                                    <td colspan="11" class="text-center text-muted py-3">
+                                        {{#str}}noincidents, logstore_moodefense{{/str}}
+                                    </td>
+                                </tr>
+                            {{/issues}}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="px-4 py-3">
+                    <a href="{{issuesurl}}" class="text-primary text-decoration-none">
+                        {{#str}}viewallissues, logstore_moodefense{{/str}}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="chart-data" data-chartdata='{{chartdata}}' style="display: none;"></div>
+    <div id="severity-data" data-severitydata='{{severitydata}}' style="display: none;"></div>
+
+    {{#hasothers}}
+        <div id="roles-others-tooltip" class="d-none">
+            <div class="roles-tooltip-header">{{othersheader}}</div>
+            <div class="roles-tooltip-body">
+                {{#othersbreakdown}}
+                    <div class="roles-tooltip-row">
+                        <span class="roles-tooltip-name">{{name}}</span>
+                        <span class="roles-tooltip-count">{{count}}</span>
+                    </div>
+                {{/othersbreakdown}}
+            </div>
+        </div>
+    {{/hasothers}}
+</div>

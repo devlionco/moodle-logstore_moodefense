@@ -1,0 +1,104 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template logstore_moodefense/algorithms
+
+    "Active incident types" admin setting (classes/admin/setting_algorithms.php): one row per free
+    algorithm with its Detect and Notify checkboxes - the fields of two settings, named like core's
+    admin_setting_configmulticheckbox; Notify is off and disabled while Detect is - and its
+    description under the name; then the premium algorithms the same way, with a "Premium" button in
+    place of the checkboxes that opens the contact dialogue (amd/src/settings.js).
+
+    Context variables required for this template:
+    * id, name             - string - Detect setting element id and form field name.
+    * notifyid, notifyname - string - Notify setting element id and form field name.
+    * readonly             - bool - Detect setting is locked in config.php.
+    * notifyreadonly       - bool - Notify setting is locked in config.php.
+    * free - array of {key, title, label, description, detect, notify}; label may hold search highlighting.
+    * premium - array of {key, title, label, description}; title is the plain name.
+
+    Example context (json):
+    {
+        "id": "id_s_logstore_moodefense_algorithms",
+        "name": "s_logstore_moodefense_algorithms",
+        "notifyid": "id_s_logstore_moodefense_algorithms_notifications",
+        "notifyname": "s_logstore_moodefense_algorithms_notifications",
+        "readonly": false,
+        "notifyreadonly": false,
+        "free": [
+            {"key": 7, "title": "Password Guessing", "label": "Password Guessing", "description": "Failed logins.",
+             "detect": true, "notify": true}
+        ],
+        "premium": [
+            {"key": 1, "title": "Staff Activity", "label": "Staff Activity", "description": "Session hijacking."}
+        ]
+    }
+}}
+<div class="form-multicheckbox" id="{{id}}">
+    {{^readonly}}<input type="hidden" name="{{name}}[xxxxx]" value="1">{{/readonly}}
+    {{^notifyreadonly}}<input type="hidden" name="{{notifyname}}[xxxxx]" value="1">{{/notifyreadonly}}
+    <table class="table table-sm mb-0">
+        <thead>
+            <tr>
+                <th scope="col">{{#str}}column_incidenttype, logstore_moodefense{{/str}}</th>
+                <th scope="col" class="text-center">{{#str}}detect, logstore_moodefense{{/str}}</th>
+                <th scope="col" class="text-center">{{#str}}notify, logstore_moodefense{{/str}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#free}}
+                <tr>
+                    <td>
+                        <div>{{{label}}}</div>
+                        <div class="small text-muted">{{description}}</div>
+                    </td>
+                    <td class="text-center">
+                        <label class="accesshide" for="{{id}}_{{key}}">
+                            {{#str}}detectalgorithm, logstore_moodefense, {{title}}{{/str}}
+                        </label>
+                        <input type="checkbox" name="{{name}}[{{key}}]" value="1" id="{{id}}_{{key}}"
+                               data-notify="{{notifyid}}_{{key}}"
+                               {{#readonly}}disabled{{/readonly}} {{#detect}}checked{{/detect}}>
+                    </td>
+                    <td class="text-center">
+                        <label class="accesshide" for="{{notifyid}}_{{key}}">
+                            {{#str}}notifyalgorithm, logstore_moodefense, {{title}}{{/str}}
+                        </label>
+                        <input type="checkbox" name="{{notifyname}}[{{key}}]" value="1" id="{{notifyid}}_{{key}}"
+                               {{#notifyreadonly}}disabled{{/notifyreadonly}} {{^detect}}disabled{{/detect}}
+                               {{#detect}}{{#notify}}checked{{/notify}}{{/detect}}>
+                    </td>
+                </tr>
+            {{/free}}
+            {{#premium}}
+                <tr>
+                    <td>
+                        <div>{{{label}}}</div>
+                        <div class="small text-muted">{{description}}</div>
+                    </td>
+                    <td colspan="2" class="text-center">
+                        <button type="button" class="btn btn-link btn-sm p-0 text-nowrap" data-action="moodefense-premium-algorithm"
+                                data-name="{{title}}">
+                            {{#pix}}t/locked, core{{/pix}}{{#str}}premium, logstore_moodefense{{/str}}
+                            <span class="accesshide">: {{title}}</span>
+                        </button>
+                    </td>
+                </tr>
+            {{/premium}}
+        </tbody>
+    </table>
+</div>

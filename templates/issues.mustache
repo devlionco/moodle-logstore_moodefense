@@ -1,0 +1,91 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template logstore_moodefense/issues
+
+    The issues table of issues.php. Below tablet width each row stacks into a card, every cell
+    labelled with its column name (data-label, see .md-stack-table in css/dashboard.css); column
+    widths are in css/issues.css. The details buttons are wired up by amd/src/table.js.
+
+    Context variables required for this template:
+    * sorturl - string - URL sorting by number (№) the other way.
+    * sortdesc, sortasc - bool - the current sort by number, if any.
+    * rows - array of {id, algorithm, algorithmname, status, comment, message, severity, severityclass,
+      username, roles, userid, lastip, time, logurl, detailsdata (JSON for the details dialogue)}
+    * pagingbar - string - HTML of the paging bar, empty for a single page.
+
+    Example context (json):
+    {
+        "sorturl": "#",
+        "rows": [{"id": 1, "algorithm": 7, "algorithmname": "Aggressive Password Guessing",
+                  "status": "Opened", "comment": "", "message": "IP 10.0.0.1 made brute force attack",
+                  "severity": "Medium", "severityclass": "medium", "username": "Ann Lee", "roles": "student",
+                  "userid": 3, "lastip": "10.0.0.1", "time": "26 Sep, 10:00", "logurl": "#", "detailsdata": "{}"}],
+        "pagingbar": ""
+    }
+}}
+<div class="mt-4">
+    <div class="border shadow-sm rounded overflow-auto">
+        <table class="table table-sm table-hover mb-0 compact-table md-stack-table" id="issues-table">
+            <thead class="table-light">
+                <tr>
+                    <th class="text-center fw-bold">
+                        <a href="{{sorturl}}" class="text-reset text-nowrap">{{#str}}column_number, logstore_moodefense{{/str}}{{!
+                        }}{{#sortdesc}}{{#pix}}t/sort_desc, core, {{#str}}desc, core{{/str}}{{/pix}}{{/sortdesc}}{{!
+                        }}{{#sortasc}}{{#pix}}t/sort_asc, core, {{#str}}asc, core{{/str}}{{/pix}}{{/sortasc}}{{!
+                        }}{{^sortdesc}}{{^sortasc}}{{#pix}}t/sort, core, {{#str}}sort, core{{/str}}{{/pix}}{{/sortasc}}{{/sortdesc}}</a>
+                    </th>
+                    <th class="text-center fw-bold">{{#str}}column_incidentid, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_incidenttype, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_status, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_comments, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_message, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_severity, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_username, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_roles, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_userid, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_lastip, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_time, logstore_moodefense{{/str}}</th>
+                    <th class="text-center fw-bold">{{#str}}column_actions, logstore_moodefense{{/str}}</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#rows}}
+                <tr>
+                    <td class="md-center fw-bold" data-label="{{#str}}column_number, logstore_moodefense{{/str}}">{{id}}</td>
+                    <td class="md-center" data-label="{{#str}}column_incidentid, logstore_moodefense{{/str}}">{{algorithm}}</td>
+                    <td class="md-prewrap" data-label="{{#str}}column_incidenttype, logstore_moodefense{{/str}}">{{algorithmname}}</td>
+                    <td class="" data-label="{{#str}}column_status, logstore_moodefense{{/str}}">{{status}}</td>
+                    <td class="md-prewrap" data-label="{{#str}}column_comments, logstore_moodefense{{/str}}">{{comment}}</td>
+                    <td class="md-prewrap" data-label="{{#str}}column_message, logstore_moodefense{{/str}}">{{message}}</td>
+                    <td class="md-center" data-label="{{#str}}column_severity, logstore_moodefense{{/str}}"><span class="badge bg-{{severityclass}} px-2 py-1">{{severity}}</span></td>
+                    <td class="text-wrap" data-label="{{#str}}column_username, logstore_moodefense{{/str}}">{{username}}</td>
+                    <td class="md-prewrap" data-label="{{#str}}column_roles, logstore_moodefense{{/str}}">{{roles}}</td>
+                    <td class="md-center" data-label="{{#str}}column_userid, logstore_moodefense{{/str}}">{{userid}}</td>
+                    <td class="text-wrap" data-label="{{#str}}column_lastip, logstore_moodefense{{/str}}">{{lastip}}</td>
+                    <td class="" data-label="{{#str}}column_time, logstore_moodefense{{/str}}">{{time}}</td>
+                    <td class="md-center text-nowrap" data-label="{{#str}}column_actions, logstore_moodefense{{/str}}"><button class="btn btn-sm btn-link view-details-btn p-0" data-details="{{detailsdata}}" title="{{#str}}column_viewdetails, logstore_moodefense{{/str}}"><i class="icon fa fa-search"></i></button><a href="{{logurl}}" class="btn btn-sm btn-link p-0 ms-2" target="_blank" title="{{#str}}viewlogs, logstore_moodefense{{/str}}"><i class="icon fa fa-file-text-o"></i></a></td>
+                </tr>
+                {{/rows}}
+                {{^rows}}
+                <tr><td colspan="13" class="text-center text-muted py-4">{{#str}}nologsfound, core{{/str}}</td></tr>
+                {{/rows}}
+            </tbody>
+        </table>
+    </div>
+    {{#pagingbar}}<div class="mt-3 text-center">{{{pagingbar}}}</div>{{/pagingbar}}
+</div>

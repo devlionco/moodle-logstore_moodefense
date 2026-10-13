@@ -1,0 +1,109 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template logstore_moodefense/issue_details
+
+    Body of the issue details modal on issues.php.
+
+    Rendered by amd/src/table.js from the details data issues.php puts on each row.
+
+    Context variables required for this template:
+    * statusoptions - array of {value, text, selected}
+    * time - string, already formatted for display
+    * algorithm - int, the algorithm id
+    * algorithmname - string
+    * message - string
+    * severity - string
+    * description - string
+    * comment - string
+    * fields - array of {label, and text, url (text is the link's text) or ips}, see
+      \logstore_moodefense\local\issue_details::fields(). ips - array of {ip, url, hidden}, with ipsmore the
+      number hidden. amd/src/table.js adds the country next to each .ip-item-link and expands the list.
+
+    Example context (json):
+    {
+        "statusoptions": [{"value": 0, "text": "Opened", "selected": true}],
+        "time": "26/09/2026, 10:00:00",
+        "algorithm": 7,
+        "algorithmname": "Aggressive Password Guessing",
+        "message": "IP 10.0.0.1 made brute force attack, related user 3.",
+        "severity": "Medium",
+        "description": "Password guessing detected.",
+        "comment": "",
+        "fields": [
+            {"label": "User Name", "text": "Sam Student"},
+            {
+                "label": "IPs",
+                "ips": [{"ip": "10.0.0.1", "url": "#", "hidden": false}],
+                "ipsmore": 0
+            },
+            {"label": "Profile link", "url": "#", "text": "View Profile"}
+        ]
+    }
+}}
+<div class="moodefense-details">
+    <p>
+        <strong>{{#str}} modal_status, logstore_moodefense {{/str}}:</strong>
+        <select id="statusSelect" class="status-selector custom-select form-select d-inline-block w-auto">
+            {{#statusoptions}}
+                <option value="{{value}}" {{#selected}}selected{{/selected}}>{{text}}</option>
+            {{/statusoptions}}
+        </select>
+    </p>
+    <p><strong>{{#str}} modal_time, logstore_moodefense {{/str}}:</strong> {{time}}</p>
+    <p><strong>{{#str}} modal_incidentid, logstore_moodefense {{/str}}:</strong> {{algorithm}}</p>
+    <p><strong>{{#str}} modal_incidenttype, logstore_moodefense {{/str}}:</strong> {{algorithmname}}</p>
+    <p><strong>{{#str}} modal_message, logstore_moodefense {{/str}}:</strong> {{message}}</p>
+    <p class="detail-row-spaced">
+        <strong>{{#str}} modal_severity, logstore_moodefense {{/str}}:</strong> {{severity}}
+    </p>
+    <p><strong>{{#str}} modal_description, logstore_moodefense {{/str}}:</strong> {{description}}</p>
+    <div class="detail-row-flex">
+        <strong class="detail-label">{{#str}} modal_comment, logstore_moodefense {{/str}}:</strong>
+        <div class="detail-value">
+            <textarea id="commentText" class="details-textarea" rows="4" cols="50">{{comment}}</textarea>
+        </div>
+    </div>
+    {{#fields}}
+    <div class="detail-row-flex-start">
+        <strong class="detail-label-top">{{label}}:</strong>
+        <div class="detail-value">
+            {{#ips.0}}
+                <div class="ip-address-container">
+                    <div class="ip-scrollable-list ip-list-column">
+                        {{#ips}}
+                            <div class="ip-item{{#hidden}} d-none{{/hidden}}"{{#hidden}} data-hidden{{/hidden}}>
+                                <a href="{{url}}" target="_blank" class="ip-item-link">{{ip}}</a>
+                            </div>
+                        {{/ips}}
+                    </div>
+                    {{#ipsmore}}
+                        <button type="button" class="btn btn-link btn-sm p-0 ip-toggle-btn" data-more="{{ipsmore}}">
+                            <span class="toggle-text">{{#str}} ipsmore, logstore_moodefense, {{ipsmore}} {{/str}}</span>
+                            <i class="fa fa-angle-down"></i>
+                        </button>
+                    {{/ipsmore}}
+                </div>
+            {{/ips.0}}
+            {{^ips}}
+                {{#url}}<a href="{{url}}" target="_blank">{{text}}</a>{{/url}}
+                {{^url}}{{text}}{{/url}}
+            {{/ips}}
+        </div>
+    </div>
+    {{/fields}}
+</div>

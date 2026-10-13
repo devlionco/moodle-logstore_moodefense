@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="admin/tool/log/store/moodefense/db" VERSION="20220616" COMMENT="XMLDB file for Moodle admin/tool/log/store/moodefense"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:noNamespaceSchemaLocation="../../../../../../lib/xmldb/xmldb.xsd"
+>
+    <TABLES>
+        <TABLE NAME="logstore_moodefense_log" COMMENT="Moodefense log table">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="eventname" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="component" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="action" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="target" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="objecttable" TYPE="char" LENGTH="50" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="objectid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="crud" TYPE="char" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="edulevel" TYPE="int" LENGTH="1" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="contextid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="contextlevel" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="contextinstanceid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="relateduserid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="anonymous" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Was this event anonymous at the time of triggering?"/>
+                <FIELD NAME="other" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="origin" TYPE="char" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="cli, cron, ws, etc."/>
+                <FIELD NAME="ip" TYPE="char" LENGTH="45" NOTNULL="false" SEQUENCE="false" COMMENT="IP address"/>
+                <FIELD NAME="realuserid" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="real user id when logged-in-as"/>
+                <FIELD NAME="ipint" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false" COMMENT="ipint"/>
+                <FIELD NAME="useragent" TYPE="char" LENGTH="255" NOTNULL="false" SEQUENCE="false" COMMENT="useragent"/>
+                <FIELD NAME="useragentint" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="useragentint"/>
+                <FIELD NAME="sessionidentifier" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="session identifier"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="contextid" TYPE="foreign" FIELDS="contextid" REFTABLE="context" REFFIELDS="id"/>
+                <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+                <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+                <KEY NAME="realuserid" TYPE="foreign" FIELDS="realuserid" REFTABLE="user" REFFIELDS="id"/>
+                <KEY NAME="relateduserid" TYPE="foreign" FIELDS="relateduserid" REFTABLE="user" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="time-user-agent-ip" UNIQUE="false" FIELDS="timecreated, userid, useragentint, ipint" COMMENT="Covers algorithm 4"/>
+                <INDEX NAME="event-time" UNIQUE="false" FIELDS="eventname, timecreated, userid, ipint, sessionidentifier, origin" COMMENT="Covers algorithms 2 and 7"/>
+                <INDEX NAME="course-time" UNIQUE="false" FIELDS="courseid, anonymous, timecreated"/>
+                <INDEX NAME="user-module" UNIQUE="false" FIELDS="userid, contextlevel, contextinstanceid, crud, edulevel, timecreated"/>
+            </INDEXES>
+        </TABLE>
+        <TABLE NAME="logstore_moodefense_issues" COMMENT="Moodefense issues table">
+            <FIELDS>
+                <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+                <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="algorithm" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="issuekey" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="Algorithm-specific part of the incident identity, with algorithm and userid"/>
+                <FIELD NAME="severity" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="comment" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+                <FIELD NAME="roles" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="data" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="dateissue" TYPE="int" LENGTH="10" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
+                <FIELD NAME="message" TYPE="text" NOTNULL="true" SEQUENCE="false"/>
+                <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
+            </FIELDS>
+            <KEYS>
+                <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+                <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+            </KEYS>
+            <INDEXES>
+                <INDEX NAME="severity-date" UNIQUE="false" FIELDS="severity, dateissue"/>
+                <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+                <INDEX NAME="status-date" UNIQUE="false" FIELDS="status, dateissue"/>
+                <INDEX NAME="algorithm-key" UNIQUE="false" FIELDS="algorithm, issuekey"/>
+                <INDEX NAME="dateissue" UNIQUE="false" FIELDS="dateissue"/>
+                <INDEX NAME="timecreated" UNIQUE="false" FIELDS="timecreated"/>
+            </INDEXES>
+        </TABLE>
+    </TABLES>
+</XMLDB>

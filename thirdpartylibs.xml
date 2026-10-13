@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<libraries>
+    <library>
+        <location>source/GeoLite2-City.mmdb</location>
+        <name>GeoLite2 City</name>
+        <version>2025-10-31</version>
+        <license>GeoLite2 End User License Agreement</license>
+        <licenseversion></licenseversion>
+        <repository>https://dev.maxmind.com/geoip/geolite2-free-geolocation-data</repository>
+    </library>
+</libraries>

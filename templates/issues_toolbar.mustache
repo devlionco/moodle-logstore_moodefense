@@ -1,0 +1,95 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template logstore_moodefense/issues_toolbar
+
+    Issues page (issues.php) actions - clear history on the inline start, export and the Filter
+    toggle on the inline end - then the filter form, open by default, and the result count. The
+    buttons are wired up by amd/src/table.js.
+
+    Context variables required for this template:
+    * action       - string - form action URL.
+    * textfilters  - array of {name, label, value} - free-text filters.
+    * selects      - array of {name, label, options: [{value, text, selected}]} - dropdown filters.
+    * wasfiltered  - bool - a filter is applied (shows the reset link).
+    * reseturl     - string - URL without the filters.
+    * showing      - string - "Showing x-y of z", empty when there are no issues.
+    * canmanage    - bool - show the clear history button.
+    * sort         - string - the table's sort order, kept when filtering.
+
+    Example context (json):
+    {
+        "action": "https://example.com/admin/tool/log/store/moodefense/issues.php",
+        "textfilters": [{"name": "filterip", "label": "IP", "value": ""}],
+        "selects": [{"name": "filterseverity", "label": "Severity",
+                     "options": [{"value": "", "text": "All severities", "selected": true}]}],
+        "wasfiltered": false,
+        "reseturl": "https://example.com/admin/tool/log/store/moodefense/issues.php",
+        "showing": "Showing 1-50 of 60",
+        "canmanage": true
+    }
+}}
+<div class="logstore-moodefense-issues-toolbar mb-3">
+    <div class="md-toolbar-header">
+        <span class="md-page-actions">
+            {{#canmanage}}
+                <button type="button" id="clear-table-btn" class="btn btn-outline-primary">
+                    {{#pix}}t/delete, core{{/pix}}{{#str}}clearallhistory, logstore_moodefense{{/str}}
+                </button>
+            {{/canmanage}}
+        </span>
+        <span class="md-page-actions">
+            <button type="button" id="export-excel-btn" class="btn btn-outline-success">
+                {{#pix}}t/download, core{{/pix}}{{#str}}exporttoexcel, logstore_moodefense{{/str}}
+            </button>
+            <button type="button" id="toggle-filter-btn" class="btn btn-outline-primary"
+                    aria-controls="filter-panel" aria-expanded="true">
+                {{#pix}}i/filter, core{{/pix}}{{#str}}filter, core{{/str}}
+            </button>
+        </span>
+    </div>
+    <div id="filter-panel" class="md-filters-collapse">
+        <form method="get" action="{{action}}" class="md-filters" role="search">
+            {{#sort}}<input type="hidden" name="sort" value="{{sort}}">{{/sort}}
+            {{#textfilters}}
+                <div class="md-filter">
+                    <label for="{{name}}">{{label}}</label>
+                    <input type="text" class="form-control" id="{{name}}" name="{{name}}" value="{{value}}">
+                </div>
+            {{/textfilters}}
+            {{#selects}}
+                <div class="md-filter">
+                    <label for="{{name}}">{{label}}</label>
+                    <select class="custom-select form-select" id="{{name}}" name="{{name}}">
+                        {{#options}}
+                            <option value="{{value}}" {{#selected}}selected{{/selected}}>{{text}}</option>
+                        {{/options}}
+                    </select>
+                </div>
+            {{/selects}}
+            <div class="md-filter-actions">
+                <button type="submit" class="btn btn-primary" title="{{#str}}search, core{{/str}}">
+                    {{#pix}}a/search, core{{/pix}}<span class="accesshide">{{#str}}search, core{{/str}}</span>
+                </button>
+                {{#wasfiltered}}
+                    <a href="{{reseturl}}" class="btn btn-link">{{#str}}reset, core{{/str}}</a>
+                {{/wasfiltered}}
+            </div>
+        </form>
+    </div>
+    {{#showing}}<div class="md-showing small text-muted">{{showing}}</div>{{/showing}}
+</div>

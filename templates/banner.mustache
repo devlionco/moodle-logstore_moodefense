@@ -1,0 +1,39 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template logstore_moodefense/banner
+
+    "Free version" banner pointing to MooDefense Premium, shown on the dashboard, the issues page
+    and the settings page. Bootstrap utilities only: the plugin has no site-wide styles.
+
+    Context variables required for this template:
+    * premiumcount   - int - number of incident types MooDefense Premium adds.
+    * premiumcontact - string - mailto: link to ask about MooDefense Premium.
+
+    Example context (json):
+    {
+        "premiumcount": 5,
+        "premiumcontact": "mailto:info@example.com"
+    }
+}}
+<div class="d-flex flex-wrap align-items-center justify-content-between p-3 mb-4 bg-white border rounded">
+    <span class="d-flex flex-wrap align-items-center me-3">
+        <span class="badge rounded-pill bg-light text-dark border me-2">{{#str}}freeversion, logstore_moodefense{{/str}}</span>
+        <span class="text-muted">{{#str}}premiumbanner, logstore_moodefense, {{premiumcount}}{{/str}}</span>
+    </span>
+    <a href="{{premiumcontact}}" class="btn btn-outline-primary btn-sm my-1">{{#str}}contactus, logstore_moodefense{{/str}}</a>
+</div>

@@ -1,0 +1,503 @@
+/**
+ * MooDefense dashboard styles.
+ *
+ * Structure:
+ *   1. Page + design tokens
+ *   2. Cards
+ *   3. Roles chart + legend
+ *   4. Chart + roles breakdown tooltips (shared by both charts + sidebar bullet)
+ *   5. Severity chart
+ *   6. Issues table
+ *   7. Severity badge colours
+ *   8. Responsive
+ */
+
+/* 1. Page + design tokens ------------------------------------------------ */
+
+/* Tokens consumed by elements Chart.js/Bootstrap append straight to <body>
+   (the floating chart tooltip, the Bootstrap tooltip popper) must live on
+   :root - those elements sit outside .logstore-moodefense-dashboard, so a
+   variable scoped to it would not cascade down to them. This stylesheet is
+   only ever loaded on this dashboard, so :root stays safely scoped in practice. */
+:root {
+    --md-tooltip-bg: rgba(33, 37, 41, 0.95);
+    --md-tooltip-width: 360px;
+}
+
+.logstore-moodefense-dashboard {
+    --md-radius: 0.5rem;
+    --md-border-color: #dee2e6;
+    --md-text-muted: #6c757d;
+    --md-text-dark: #212529;
+    --md-bullet-size: 14px;
+
+    background: #f8f9fa;
+    min-height: 100vh;
+    font-size: 0.875rem;
+}
+
+/* 2. Cards ---------------------------------------------------------------- */
+
+.logstore-moodefense-dashboard .card {
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.logstore-moodefense-dashboard .card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.dashboard-card-equal {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-card-equal .card-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+/* 3. Roles chart + legend -------------------------------------------------- */
+
+.roles-chart-wrapper {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    position: relative;
+    min-height: 0;
+    flex: 1;
+}
+
+.roles-list-sidebar {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-auto-rows: min-content;
+    gap: 6px 16px;
+    padding-left: 10px;
+    align-content: flex-start;
+    max-height: 100%;
+    overflow-y: auto;
+}
+
+.roles-chart-main {
+    flex: 0 0 380px;
+    max-width: 380px;
+    width: 380px;
+    height: 360px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    margin-top: 30px;
+    overflow: hidden;
+}
+
+#rolesChart,
+#severityChart {
+    width: 100%;
+    height: 100%;
+    max-width: 100%;
+    max-height: 100%;
+}
+
+.role-bullet {
+    width: var(--md-bullet-size);
+    height: var(--md-bullet-size);
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.role-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--md-text-dark);
+}
+
+/* The "Others" row is a real <button> (not a <div>) so its breakdown tooltip
+   is reachable by keyboard and by tapping on touch devices, not just by hover.
+   Host themes commonly style bare <button> elements with their own hover/focus/
+   active background (e.g. a dark fill) - override all of those states explicitly
+   so it keeps looking like a plain legend row, not a themed button. */
+.logstore-moodefense-dashboard .roles-other,
+.logstore-moodefense-dashboard .roles-other:hover,
+.logstore-moodefense-dashboard .roles-other:focus,
+.logstore-moodefense-dashboard .roles-other:active {
+    cursor: pointer;
+    width: 100%;
+    border: 0;
+    background-color: transparent;
+    box-shadow: none;
+    font: inherit;
+    text-align: left;
+    padding: 0;
+}
+
+.roles-other:focus-visible {
+    outline: 2px solid var(--md-text-muted);
+    outline-offset: 2px;
+}
+
+.roles-other .role-name {
+    font-style: italic;
+    color: var(--md-text-muted);
+}
+
+/* 4. Chart + roles breakdown tooltips ---------------------------------------- */
+/* .chart-tooltip is one shared floating element reused by both charts' hover
+   handlers (see amd/src/dashboard.js createTooltipHandler) so hovering the
+   roles pie chart and the severity bar chart looks and behaves identically.
+   The roles breakdown rows (see the #roles-others-tooltip template block) are
+   rendered in two places: as a Bootstrap tooltip off the sidebar "Others"
+   button, and copied verbatim into .chart-tooltip when hovering that slice. */
+
+.roles-tooltip-header {
+    font-weight: 600;
+    padding-bottom: 6px;
+    margin-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.roles-tooltip-body {
+    max-height: 260px;
+    overflow-y: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(130px, 1fr));
+    gap: 2px 20px;
+}
+
+.roles-tooltip-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 3px 0;
+    font-size: 0.78rem;
+    white-space: nowrap;
+}
+
+.roles-tooltip-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.roles-tooltip-count {
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-left: 12px;
+}
+
+.chart-tooltip {
+    position: absolute;
+    top: 0;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    background: var(--md-tooltip-bg);
+    color: #fff;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 0.78rem;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+    min-width: 160px;
+    max-width: var(--md-tooltip-width);
+    z-index: 2000;
+    transition: opacity 0.1s ease;
+}
+
+/* Bootstrap's default 200px tooltip cap is too narrow for the two-column roles
+   breakdown; this rule only takes effect on the dashboard, which is the only
+   page that loads this stylesheet. */
+.tooltip-inner {
+    max-width: var(--md-tooltip-width);
+}
+
+/* Bootstrap's default tooltip opacity (.9) lets whatever is underneath show
+   through, which is legible enough for a one-line tooltip but looks broken
+   behind a multi-row breakdown table like ours - force it fully opaque. */
+.tooltip.show {
+    opacity: 1;
+}
+
+/* 5. Severity chart --------------------------------------------------------- */
+
+.severity-chart-container {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    padding: 5px;
+    display: flex;
+    align-items: flex-end;
+    overflow: hidden;
+}
+
+/* 6. Issues table ------------------------------------------------------------ */
+
+.table-container-full {
+    overflow-x: auto;
+    border: 1px solid var(--md-border-color);
+    border-top: none;
+    border-radius: 0 0 var(--md-radius) var(--md-radius);
+    background: #fff;
+}
+
+.compact-table {
+    margin: 0;
+    font-size: 0.8rem;
+    width: 100%;
+    table-layout: auto;
+}
+
+/* .table in the selector outranks Bootstrap's own table cell padding. */
+.table.compact-table th,
+.table.compact-table td {
+    padding: 0.5rem 0.75rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.compact-table th {
+    background-color: #f1f3f5;
+    font-weight: 600;
+    color: #495057;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-size: 0.75rem;
+}
+
+.compact-table tr:hover {
+    background-color: #fff8e1;
+}
+
+.compact-table .badge {
+    font-size: 0.65rem;
+    padding: 0.25em 0.5em;
+}
+
+/* 7. Severity badge colours --------------------------------------------------- */
+/* Bootstrap ships bg-danger/bg-warning/etc, but not these domain-specific
+   severity names, so the issues table needs its own contextual colours. */
+
+/* Darker than the Bootstrap defaults so the white badge text meets WCAG AA contrast. */
+.badge.bg-critical {
+    color: #fff;
+    background-color: #c82333;
+}
+
+.badge.bg-high {
+    color: #fff;
+    background-color: #c2410c;
+}
+
+.badge.bg-medium {
+    color: #212529;
+    background-color: #ffc107;
+}
+
+.badge.bg-low {
+    color: #fff;
+    background-color: #1e7e34;
+}
+
+/* 8. Responsive --------------------------------------------------------------- */
+/*
+ * Breakpoint ladder (all max-width, mobile styles win by cascade order):
+ *   991.98px - Bootstrap's own `lg` cutoff: the two top cards stop being
+ *              side-by-side columns and wrap onto separate lines.
+ *   1024px   - custom: shrink the roles card once space gets tight, stacking
+ *              its legend above its chart.
+ *   992px    - custom: further shrink the charts on small tablets.
+ *   768px    - custom: phones - tighter paddings, single-column legend.
+ *   576px    - custom: narrow phones - smallest chart/tooltip sizes.
+ */
+
+/* This theme ships Bootstrap 4, where ".g-4" (a Bootstrap 5 gap utility) is a
+   no-op - the row only gets a horizontal gutter from the columns' padding.
+   Once the two top cards wrap onto separate lines below the lg breakpoint,
+   that leaves zero vertical gap and the cards visually merge together.
+   Restore the gap explicitly. */
+@media (max-width: 991.98px) {
+    .logstore-moodefense-dashboard .row.g-4 > [class^="col-"],
+    .logstore-moodefense-dashboard .row.g-4 > [class*=" col-"] {
+        margin-bottom: 1.5rem;
+    }
+
+    .logstore-moodefense-dashboard .row.g-4 > [class^="col-"]:last-child,
+    .logstore-moodefense-dashboard .row.g-4 > [class*=" col-"]:last-child {
+        margin-bottom: 0;
+    }
+}
+
+@media (max-width: 1024px) {
+    .dashboard-card-equal {
+        height: auto;
+        min-height: 450px;
+    }
+    .roles-chart-wrapper {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .roles-list-sidebar {
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 15px;
+        padding: 0 10px;
+        max-height: 320px;
+    }
+
+    .roles-chart-main {
+        max-width: 350px;
+        height: 320px;
+        margin: 0 auto;
+    }
+    .severity-chart-container {
+        height: 300px;
+    }
+}
+
+@media (max-width: 992px) {
+    .roles-chart-main {
+        max-width: 320px;
+        height: 300px;
+    }
+    .severity-chart-container {
+        height: 280px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-card-equal {
+        min-height: 400px;
+    }
+    .roles-chart-wrapper {
+        gap: 15px;
+    }
+    .roles-list-sidebar {
+        grid-template-columns: 1fr;
+        padding: 0 5px;
+        max-height: 280px;
+    }
+    .roles-chart-main {
+        height: 260px;
+        max-width: 280px;
+        padding: 0;
+    }
+    .severity-chart-container {
+        height: 260px;
+        padding: 0;
+    }
+
+    .table.compact-table th,
+    .table.compact-table td {
+        font-size: 0.7rem;
+        padding: 0.3rem 0.5rem;
+        max-width: 120px;
+    }
+
+    .logstore-moodefense-dashboard .container-fluid {
+        padding-left: 12px;
+        padding-right: 12px;
+        padding-top: 16px;
+    }
+}
+
+/* Cells centred on wide screens only (not with .text-center, whose !important would also
+   centre the stacked cards below). */
+@media (min-width: 768px) {
+    .md-stack-table .md-center {
+        text-align: center;
+    }
+}
+
+/* Stacked tables (.md-stack-table - the dashboard's latest issues and the issues page): below
+   tablet width each row becomes a card listing "column: value" pairs, the column name coming
+   from the cell's data-label. The header row stays for screen readers only; empty cells are
+   left out. ".table" in the selectors outranks the regular cell padding. */
+@media (max-width: 767.98px) {
+    .md-stack-table thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+    }
+
+    .md-stack-table,
+    .md-stack-table tbody,
+    .md-stack-table tr {
+        display: block;
+        width: 100%;
+    }
+
+    .md-stack-table tr {
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid var(--md-border-color, #dee2e6);
+    }
+
+    /* The label sits in the inline-start column; the value flows as usual text beside it, so
+       badges keep their size and several links or line breaks stay together. */
+    .table.md-stack-table td {
+        position: relative;
+        display: block;
+        max-width: none;
+        min-height: 1.6em;
+        padding: 0.2rem 0;
+        padding-inline-start: 38%;
+        border: 0;
+        white-space: normal;
+        overflow-wrap: anywhere;
+    }
+
+    .md-stack-table td[data-label]::before {
+        content: attr(data-label);
+        position: absolute;
+        inset-inline-start: 0;
+        width: 35%;
+        font-weight: 600;
+        color: #495057;
+    }
+
+    .table.md-stack-table td:not([data-label]) {
+        padding: 0.5rem 0;
+        text-align: center;
+    }
+
+    .md-stack-table td:empty {
+        display: none;
+    }
+}
+
+@media (max-width: 576px) {
+    .roles-chart-main {
+        height: 240px;
+        max-width: 260px;
+    }
+    .severity-chart-container {
+        height: 240px;
+    }
+    .roles-list-sidebar {
+        gap: 8px;
+        padding: 0;
+        max-height: 260px;
+    }
+    .role-name {
+        font-size: 0.85rem;
+    }
+    .roles-tooltip-body {
+        grid-template-columns: 1fr;
+        max-height: 200px;
+    }
+
+    .chart-tooltip,
+    .tooltip-inner {
+        max-width: 260px;
+    }
+}

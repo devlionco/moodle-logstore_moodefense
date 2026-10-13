@@ -1,0 +1,312 @@
+/* Toolbar (templates/issues_toolbar.mustache): the page actions, then the filters in a grid -
+   six columns on desktop, three on tablets, two on phones - and the result count.
+   Spacing uses gap, not margin utilities, whose names differ between Bootstrap 4 and 5. */
+.logstore-moodefense-issues-toolbar .md-filters {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr)) auto;
+    gap: 0.75rem;
+    align-items: end;
+    /* Room for the focus rings, which the collapsing wrapper would otherwise clip. */
+    padding: 0.75rem 0.25rem 0.25rem;
+    margin: 0 -0.25rem;
+}
+
+/* The Filter button collapses the filters smoothly: the wrapper's only row shrinks from its
+   content height (1fr) to nothing (0fr). */
+.logstore-moodefense-issues-toolbar .md-filters-collapse {
+    display: grid;
+    grid-template-rows: 1fr;
+    transition: grid-template-rows 0.3s ease, opacity 0.3s ease, visibility 0s;
+}
+
+.logstore-moodefense-issues-toolbar .md-filters-collapse > .md-filters {
+    min-height: 0;
+    overflow: hidden;
+    transition: padding 0.3s ease;
+}
+
+.logstore-moodefense-issues-toolbar .md-filters-collapse.collapsed {
+    grid-template-rows: 0fr;
+    opacity: 0;
+    /* Hidden once collapsed (after the animation), shown straight away when expanding. */
+    visibility: hidden;
+    transition: grid-template-rows 0.3s ease, opacity 0.3s ease, visibility 0s 0.3s;
+}
+
+/* Padding does not shrink with the row: collapse it too. */
+.logstore-moodefense-issues-toolbar .md-filters-collapse.collapsed > .md-filters {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .logstore-moodefense-issues-toolbar .md-filters-collapse,
+    .logstore-moodefense-issues-toolbar .md-filters-collapse > .md-filters {
+        transition: none;
+    }
+}
+
+.logstore-moodefense-issues-toolbar .md-filter label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-size: 0.8rem;
+    color: #495057;
+}
+
+.logstore-moodefense-issues-toolbar .md-filter .form-control,
+.logstore-moodefense-issues-toolbar .md-filter select {
+    width: 100%;
+}
+
+/* Themes size text inputs, selects and buttons slightly differently: keep the row even. */
+.logstore-moodefense-issues-toolbar .md-filters .form-control,
+.logstore-moodefense-issues-toolbar .md-filters select,
+.logstore-moodefense-issues-toolbar .md-filter-actions .btn {
+    height: 2.25rem;
+}
+
+.logstore-moodefense-issues-toolbar .md-filter-actions .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.logstore-moodefense-issues-toolbar .md-filter-actions,
+.logstore-moodefense-issues-toolbar .md-page-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.logstore-moodefense-issues-toolbar .md-toolbar-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.logstore-moodefense-issues-toolbar .md-toolbar-header .btn {
+    min-width: 120px;
+    font-size: 0.9rem;
+}
+
+.logstore-moodefense-issues-toolbar .md-showing {
+    margin-top: 0.75rem;
+    text-align: end;
+}
+
+/* The Filter button looks pressed (filled) while the filters are shown. */
+.logstore-moodefense-issues-toolbar #toggle-filter-btn[aria-expanded="true"] {
+    color: #fff;
+    background-color: var(--bs-primary, var(--primary, #0f6cbf));
+}
+
+.logstore-moodefense-issues-toolbar .md-page-actions .icon {
+    margin-inline-end: 0.25rem;
+}
+
+.logstore-moodefense-issues-toolbar #toggle-filter-btn .icon {
+    margin-inline-end: 0.25rem;
+}
+
+.logstore-moodefense-issues-toolbar .md-filter-actions .icon {
+    margin: 0;
+}
+
+@media (max-width: 991.98px) {
+    .logstore-moodefense-issues-toolbar .md-filters {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 575.98px) {
+    .logstore-moodefense-issues-toolbar .md-filters {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .logstore-moodefense-issues-toolbar .md-filter-actions {
+        grid-column: 1 / -1;
+    }
+
+    .logstore-moodefense-issues-toolbar .md-filter-actions .btn-primary {
+        flex: 1;
+    }
+}
+
+/* Issues table. */
+#page-admin-tool-log-store-moodefense-issues .compact-table td,
+#page-admin-tool-log-store-moodefense-issues .compact-table th {
+    white-space: normal;
+    word-wrap: break-word;
+    line-height: 1.5;
+    vertical-align: top;
+    padding: 0.5rem 0.4rem;
+}
+
+#page-admin-tool-log-store-moodefense-issues .compact-table th {
+    background: transparent;
+    font-size: 0.82rem;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 2px solid #dee2e6;
+}
+
+/* Column widths (templates/issues.mustache): №, incident ID, message, severity,
+   user ID, time, actions. */
+#page-admin-tool-log-store-moodefense-issues #issues-table th:nth-child(1),
+#page-admin-tool-log-store-moodefense-issues #issues-table th:nth-child(2) {
+    width: 50px;
+}
+
+#page-admin-tool-log-store-moodefense-issues #issues-table th:nth-child(6) {
+    min-width: 160px;
+}
+
+/* User name, roles and IP: long words may break anywhere, unlike "break-word", which still sizes
+   the column by its longest word. So the table fits the page with the actions in sight. */
+#page-admin-tool-log-store-moodefense-issues #issues-table td:nth-child(8),
+#page-admin-tool-log-store-moodefense-issues #issues-table td:nth-child(9),
+#page-admin-tool-log-store-moodefense-issues #issues-table td:nth-child(11) {
+    overflow-wrap: anywhere;
+}
+
+#page-admin-tool-log-store-moodefense-issues #issues-table th:nth-child(7),
+#page-admin-tool-log-store-moodefense-issues #issues-table th:nth-child(13) {
+    width: 90px;
+}
+
+#page-admin-tool-log-store-moodefense-issues #issues-table th:nth-child(10) {
+    width: 70px;
+}
+
+#page-admin-tool-log-store-moodefense-issues #issues-table td:nth-child(12) {
+    white-space: nowrap;
+}
+
+/* Line breaks typed into comments (and any in the other texts) show as typed. */
+#page-admin-tool-log-store-moodefense-issues #issues-table td.md-prewrap {
+    white-space: pre-line;
+}
+
+#page-admin-tool-log-store-moodefense-issues .overflow-auto {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Below tablet width the rows stack into cards (css/dashboard.css, .md-stack-table). */
+@media (max-width: 767.98px) {
+    #page-admin-tool-log-store-moodefense-issues .compact-table {
+        font-size: 0.85rem;
+    }
+
+    #page-admin-tool-log-store-moodefense-issues .md-stack-table td {
+        padding: 0.2rem 0;
+        padding-inline-start: 38%;
+    }
+
+    #page-admin-tool-log-store-moodefense-issues .md-stack-table td:not([data-label]) {
+        padding: 0.5rem 0;
+    }
+
+    .logstore-moodefense-issues-toolbar .md-page-actions .btn {
+        white-space: nowrap;
+    }
+
+    /* The page actions share the width: clear history on its own row, export and filter next. */
+    .logstore-moodefense-issues-toolbar .md-page-actions {
+        flex: 1 1 100%;
+    }
+
+    .logstore-moodefense-issues-toolbar .md-page-actions .btn {
+        flex: 1;
+        min-width: 0;
+    }
+}
+
+/* Issue details modal (amd/src/table.js + templates/issue_details.mustache). */
+.moodefense-modal .modal-body,
+.moodefense-modal .modal-header {
+    padding: 15px 21.5px;
+}
+
+.moodefense-details .detail-row-spaced {
+    margin-bottom: 18px;
+}
+
+.moodefense-details .detail-row-flex {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+.moodefense-details .detail-row-flex-start {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.moodefense-details .detail-label {
+    white-space: nowrap;
+}
+
+.moodefense-details .detail-label-top {
+    white-space: nowrap;
+    padding-top: 2px;
+}
+
+.moodefense-details .detail-value {
+    flex: 1;
+    min-width: 0;
+}
+
+/* Long values (user agents, messages, IP lists) wrap instead of widening the dialogue. */
+.moodefense-details {
+    overflow-wrap: anywhere;
+}
+
+/* Phones: labels above their value, so the comment box gets the full width. */
+@media (max-width: 575.98px) {
+    .moodefense-details .detail-row-flex,
+    .moodefense-details .detail-row-flex-start {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.25rem;
+    }
+}
+
+.moodefense-details .details-textarea {
+    width: 100%;
+}
+
+.moodefense-details .ip-scrollable-list {
+    max-height: 80px;
+    overflow-y: auto;
+}
+
+.moodefense-details .ip-list-column {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.moodefense-details .ip-country-code {
+    color: #666;
+}
+
+.moodefense-details .ip-item-link {
+    word-break: break-all;
+}
+
+.moodefense-details .ip-toggle-btn {
+    text-decoration: none;
+    font-size: 0.8em;
+    color: #007bff;
+    margin-top: 5px;
+}
+
+.moodefense-details .ip-toggle-btn i {
+    font-size: 1.1em;
+}
