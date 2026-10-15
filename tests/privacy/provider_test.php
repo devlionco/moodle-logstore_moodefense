@@ -25,6 +25,7 @@ use core_privacy\tests\provider_testcase;
 use logstore_moodefense\local\algorithm_type;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(provider::class)]
 /**
  * Tests for the privacy provider.
  *
@@ -32,8 +33,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\privacy\provider
  */
-#[CoversClass(provider::class)]
 final class provider_test extends provider_testcase {
     /** @var \stdClass Has logs (one in a course, one as related user) and their own issue. */
     private $user1;

@@ -18,6 +18,7 @@ namespace logstore_moodefense\algorithms;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(algorithm_4::class)]
 /**
  * Tests for algorithm 4: user activity from multiple IP addresses.
  *
@@ -25,8 +26,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\algorithms\algorithm_4
  */
-#[CoversClass(algorithm_4::class)]
 final class algorithm_4_test extends \advanced_testcase {
     /** @var \logstore_moodefense_generator */
     private $generator;

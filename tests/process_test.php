@@ -20,6 +20,9 @@ use logstore_moodefense\task\cleanup_task;
 use logstore_moodefense\task\processing_task;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(process::class)]
+#[CoversClass(processing_task::class)]
+#[CoversClass(cleanup_task::class)]
 /**
  * Tests for the processing run and the scheduled tasks around it.
  *
@@ -27,10 +30,11 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\process
+ * @covers \logstore_moodefense\processing_task
+ * @covers \logstore_moodefense\cleanup_task
  */
-#[CoversClass(process::class)]
-#[CoversClass(processing_task::class)]
-#[CoversClass(cleanup_task::class)]
 final class process_test extends \advanced_testcase {
     /** @var \logstore_moodefense_generator */
     private $generator;

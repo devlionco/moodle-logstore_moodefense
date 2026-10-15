@@ -18,6 +18,7 @@ namespace logstore_moodefense\algorithms;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(algorithm_5::class)]
 /**
  * Tests for algorithm 5: admin login from an unauthorized country.
  *
@@ -28,8 +29,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\algorithms\algorithm_5
  */
-#[CoversClass(algorithm_5::class)]
 final class algorithm_5_test extends \advanced_testcase {
     /** @var \logstore_moodefense_generator */
     private $generator;

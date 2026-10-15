@@ -19,6 +19,10 @@ namespace logstore_moodefense\external;
 use core_external\external_api;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(save_modal_data::class)]
+#[CoversClass(clear_table::class)]
+#[CoversClass(get_country_code::class)]
+#[CoversClass(test_email::class)]
 /**
  * Tests for the plugin's web services.
  *
@@ -26,11 +30,12 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\external\save_modal_data
+ * @covers \logstore_moodefense\external\clear_table
+ * @covers \logstore_moodefense\external\get_country_code
+ * @covers \logstore_moodefense\external\test_email
  */
-#[CoversClass(save_modal_data::class)]
-#[CoversClass(clear_table::class)]
-#[CoversClass(get_country_code::class)]
-#[CoversClass(test_email::class)]
 final class external_test extends \advanced_testcase {
     /** @var \logstore_moodefense_generator */
     private $generator;

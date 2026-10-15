@@ -18,6 +18,8 @@ namespace logstore_moodefense\algorithms;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(algorithm_10::class)]
+#[CoversClass(\logstore_moodefense\api::class)]
 /**
  * Tests for algorithm 10: Moodle security announcement match.
  *
@@ -27,9 +29,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\algorithms\algorithm_10
+ * @covers \logstore_moodefense\api
  */
-#[CoversClass(algorithm_10::class)]
-#[CoversClass(\logstore_moodefense\api::class)]
 final class algorithm_10_test extends \advanced_testcase {
     protected function setUp(): void {
         global $CFG;

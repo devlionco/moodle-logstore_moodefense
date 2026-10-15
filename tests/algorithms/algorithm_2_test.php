@@ -19,6 +19,8 @@ namespace logstore_moodefense\algorithms;
 use logstore_moodefense\local\status;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(algorithm_2::class)]
+#[CoversClass(algorithm::class)]
 /**
  * Tests for algorithm 2: staff and student login from the same device.
  *
@@ -26,9 +28,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\algorithms\algorithm_2
+ * @covers \logstore_moodefense\algorithms\algorithm
  */
-#[CoversClass(algorithm_2::class)]
-#[CoversClass(algorithm::class)]
 final class algorithm_2_test extends \advanced_testcase {
     /** @var \logstore_moodefense_generator */
     private $generator;

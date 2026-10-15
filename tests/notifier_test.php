@@ -20,6 +20,7 @@ use logstore_moodefense\local\algorithm_type;
 use logstore_moodefense\local\severity;
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(notifier::class)]
 /**
  * Tests for admin notifications.
  *
@@ -27,8 +28,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\notifier
  */
-#[CoversClass(notifier::class)]
 final class notifier_test extends \advanced_testcase {
     protected function setUp(): void {
         parent::setUp();

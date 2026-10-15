@@ -18,6 +18,7 @@ namespace logstore_moodefense;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(geoip::class)]
 /**
  * Tests for the IP-to-country lookup.
  *
@@ -25,8 +26,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\geoip
  */
-#[CoversClass(geoip::class)]
 final class geoip_test extends \advanced_testcase {
     protected function setUp(): void {
         global $CFG;

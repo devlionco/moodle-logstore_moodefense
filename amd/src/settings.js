@@ -24,6 +24,39 @@
 define(['core/ajax', 'core/str', 'core/notification', 'core/modal'], function(Ajax, Str, Notification, Modal) {
 
     /**
+     * Runs the test request of an addTestButton() button and shows its outcome.
+     *
+     * @param {object} params See addTestButton().
+     * @param {HTMLButtonElement} button The test button.
+     * @param {HTMLElement} result The result indicator.
+     * @param {string} strTesting The "in progress" text.
+     * @param {string} strOk The success text.
+     */
+    var runTest = function(params, button, result, strTesting, strOk) {
+        button.disabled = true;
+        result.className = 'text-muted';
+        result.textContent = strTesting;
+
+        params.request().then(function(response) {
+            if (response.success) {
+                result.className = 'text-success font-weight-bold';
+                result.textContent = strOk;
+                return null;
+            }
+            return Str.get_string(params.errorstringkey, 'logstore_moodefense', response.message);
+        }).catch(function(error) {
+            return Str.get_string(params.errorstringkey, 'logstore_moodefense', error.message || String(error));
+        }).then(function(errortext) {
+            if (errortext !== null) {
+                result.className = 'text-danger font-weight-bold';
+                result.textContent = errortext;
+            }
+            button.disabled = false;
+            return;
+        }).catch(Notification.exception);
+    };
+
+    /**
      * Adds a test button + result indicator after the given input/textarea, which runs the given
      * webservice request and reports its outcome.
      *
@@ -51,7 +84,7 @@ define(['core/ajax', 'core/str', 'core/notification', 'core/modal'], function(Aj
             button.textContent = strButton;
 
             var result = document.createElement('span');
-            result.className = 'ml-2';
+            result.style.marginLeft = '.5rem';
 
             var wrapper = document.createElement('div');
             wrapper.appendChild(button);
@@ -59,27 +92,7 @@ define(['core/ajax', 'core/str', 'core/notification', 'core/modal'], function(Aj
             params.anchor.parentNode.insertBefore(wrapper, params.anchor.nextSibling);
 
             button.addEventListener('click', function() {
-                button.disabled = true;
-                result.className = 'ml-2 text-muted';
-                result.textContent = strTesting;
-
-                params.request().then(function(response) {
-                    if (response.success) {
-                        result.className = 'ml-2 text-success font-weight-bold';
-                        result.textContent = strOk;
-                        return null;
-                    }
-                    return Str.get_string(params.errorstringkey, 'logstore_moodefense', response.message);
-                }).catch(function(error) {
-                    return Str.get_string(params.errorstringkey, 'logstore_moodefense', error.message || String(error));
-                }).then(function(errortext) {
-                    if (errortext !== null) {
-                        result.className = 'ml-2 text-danger font-weight-bold';
-                        result.textContent = errortext;
-                    }
-                    button.disabled = false;
-                    return;
-                });
+                runTest(params, button, result, strTesting, strOk);
             });
 
             return;

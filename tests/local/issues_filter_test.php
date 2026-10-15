@@ -18,6 +18,7 @@ namespace logstore_moodefense\local;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(issues_filter::class)]
 /**
  * Tests for the issues table filter.
  *
@@ -25,8 +26,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\local\issues_filter
  */
-#[CoversClass(issues_filter::class)]
 final class issues_filter_test extends \advanced_testcase {
     /**
      * Filters with nothing set.

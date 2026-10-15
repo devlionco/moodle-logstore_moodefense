@@ -18,6 +18,8 @@ namespace logstore_moodefense\admin;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(setting_algorithms::class)]
+#[CoversClass(setting_algorithm_notifications::class)]
 /**
  * Tests for the "Active incident types" setting.
  *
@@ -25,9 +27,10 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\admin\setting_algorithms
+ * @covers \logstore_moodefense\admin\setting_algorithm_notifications
  */
-#[CoversClass(setting_algorithms::class)]
-#[CoversClass(setting_algorithm_notifications::class)]
 final class setting_algorithms_test extends \advanced_testcase {
     /** @var setting_algorithm_notifications */
     private $notifications;

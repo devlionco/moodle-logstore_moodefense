@@ -18,6 +18,7 @@ namespace logstore_moodefense\local;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(issue_details::class)]
 /**
  * Tests for the fields of the issue details modal.
  *
@@ -25,8 +26,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\local\issue_details
  */
-#[CoversClass(issue_details::class)]
 final class issue_details_test extends \advanced_testcase {
     public function test_fields_of_data_and_of_the_user(): void {
         $record = (object)['userid' => 0, 'uid' => null, 'roles' => '', 'dateissue' => 0];

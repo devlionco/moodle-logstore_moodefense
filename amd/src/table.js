@@ -87,7 +87,7 @@ define([
         }).get()).then(function(countryCodes) {
             countryCodes.forEach(function(countryCode, index) {
                 if (countryCode) {
-                    $links.eq(index).after($('<span>', {class: 'ip-country-code'}).text(' (' + countryCode + ')'));
+                    $links.eq(index).after($('<span>', {'class': 'ip-country-code'}).text(' (' + countryCode + ')'));
                 }
             });
             return null;

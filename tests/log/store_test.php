@@ -18,6 +18,7 @@ namespace logstore_moodefense\log;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(store::class)]
 /**
  * Tests for the Moodefense log store writer.
  *
@@ -25,8 +26,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\log\store
  */
-#[CoversClass(store::class)]
 final class store_test extends \advanced_testcase {
     /**
      * Returns a store with its protected methods callable.

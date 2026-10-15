@@ -18,6 +18,7 @@ namespace logstore_moodefense\local;
 
 use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(algorithm_type::class)]
 /**
  * Tests for the list of algorithms.
  *
@@ -25,8 +26,9 @@ use PHPUnit\Framework\Attributes\CoversClass;
  * @category   test
  * @copyright  Fensive <avishay@fensive.co.il>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ *
+ * @covers \logstore_moodefense\local\algorithm_type
  */
-#[CoversClass(algorithm_type::class)]
 final class algorithm_type_test extends \advanced_testcase {
     public function test_free_algorithms_have_classes_and_strings(): void {
         foreach (algorithm_type::cases() as $algorithm) {
