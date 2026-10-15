@@ -52,7 +52,7 @@
                 <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
                 <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="algorithm" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
-                <FIELD NAME="issuekey" TYPE="char" LENGTH="100" NOTNULL="true" DEFAULT="" SEQUENCE="false" COMMENT="Algorithm-specific part of the incident identity, with algorithm and userid"/>
+                <FIELD NAME="issuekey" TYPE="char" LENGTH="100" NOTNULL="true" SEQUENCE="false" COMMENT="Algorithm-specific part of the incident identity, with algorithm and userid"/>
                 <FIELD NAME="severity" TYPE="char" LENGTH="20" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="status" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false"/>
                 <FIELD NAME="comment" TYPE="text" NOTNULL="false" SEQUENCE="false"/>

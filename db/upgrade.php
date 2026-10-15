@@ -62,7 +62,7 @@ function xmldb_logstore_moodefense_upgrade($oldversion) {
 
         // Issues are matched to an incident by algorithm, user and an indexed key instead of LIKE on JSON.
         $table = new xmldb_table('logstore_moodefense_issues');
-        $field = new xmldb_field('issuekey', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, '', 'algorithm');
+        $field = new xmldb_field('issuekey', XMLDB_TYPE_CHAR, '100', null, XMLDB_NOTNULL, null, null, 'algorithm');
         if (!$dbman->field_exists($table, $field)) {
             $dbman->add_field($table, $field);
         }
